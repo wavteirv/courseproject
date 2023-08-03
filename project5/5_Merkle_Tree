@@ -1,0 +1,70 @@
+import hashlib
+
+def sha256(data):
+    return hashlib.sha256(data).digest()
+
+class MerkleTree:
+
+    def __init__(self, leaves):
+        self.leaves = leaves
+        self.levels = self.build_tree()
+
+    def build_tree(self):
+        levels = [self.leaves]
+        while len(levels[-1]) > 1:
+            level = self.build_next_level(levels[-1])
+            levels.append(level)
+        return levels
+
+    def build_next_level(self, nodes):
+        next_level = []
+        it = iter(nodes)
+        for a, b in zip(it, it):
+            next_level.append(self.hash_nodes(a, b))
+        if len(nodes) % 2 == 1:
+            next_level.append(self.hash_nodes(nodes[-1], nodes[-1]))
+        return next_level
+
+    def hash_nodes(self, a, b):
+        return sha256(a + b)
+
+    def get_root(self):
+        return self.levels[-1][0]
+
+    def get_proof(self, index):
+        proof = []
+        for level in self.levels:
+            if index % 2 == 1:
+                proof.append(level[index - 1])
+            else:
+                if index < len(level) - 1:
+                    proof.append(level[index + 1])
+            index //= 2
+        return proof
+
+    def verify_proof(self, root, index, proof, leaf):
+        computed_root = leaf
+        for p in proof:
+            if index % 2 == 1:
+                computed_root = self.hash_nodes(p, computed_root)
+            else:
+                computed_root = self.hash_nodes(computed_root, p)
+            index //= 2
+        return computed_root == root
+
+if __name__ == "__main__":
+
+    data = ["A", "B", "C", "D", "E", "F", "G", "H"]
+    leaves = [sha256(d.encode()) for d in data]
+    merkle_tree = MerkleTree(leaves)
+
+    root = merkle_tree.get_root()
+    print("Merkle 根节点:", root.hex())
+
+    index_to_verify = 3
+    proof = merkle_tree.get_proof(index_to_verify)
+    leaf_to_verify = leaves[index_to_verify]
+    print("第", index_to_verify, "个叶节点的证明:", [p.hex() for p in proof])
+
+    is_valid = merkle_tree.verify_proof(root, index_to_verify, proof, leaf_to_verify)
+    print("证明是否有效?", is_valid)

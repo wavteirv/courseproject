@@ -1,0 +1,113 @@
+from hashlib import sha256
+from ecpy.curves import Curve,Point
+from ecpy.curves import Point
+from ecpy.keys import ECPublicKey, ECPrivateKey
+from ecpy.ecdsa import ECDSA
+import os
+
+# RFC6979算法生成确定性随机数k
+def RFC6979(private_key, z):
+    v = b'\x01' * 32
+    k = b'\x00' * 32
+    K = b'\x00' * 32
+    bz = z.to_bytes(32, 'big')
+
+    private_key = private_key.to_bytes(32, 'big')
+
+    # Step 1: Initialize
+    k = hmac_sha256(k + b'\x00' + private_key + bz)
+
+    # Step 2: Loop
+    v = hmac_sha256(k + v, v)
+    k = hmac_sha256(k + b'\x01' + private_key + bz)
+
+    # Step 3: Loop
+    v = hmac_sha256(k + v, v)
+    return int.from_bytes(v, 'big')
+
+def hmac_sha256(key, data):
+    ipad = b'\x36' * 64
+    opad = b'\x5c' * 64
+    if len(key) > 64:
+        key = sha256(key).digest()
+    key += b'\x00' * (64 - len(key))
+
+    inner = bytes([x ^ y for x, y in zip(key, ipad)])
+    inner += data
+    inner = sha256(inner).digest()
+
+    outer = bytes([x ^ y for x, y in zip(key, opad)])
+    outer += inner
+    return sha256(outer).digest()
+
+def generate_key_pair(curve):
+    private_key = ECPrivateKey(generator=Curve.generator)
+    public_key = ECPublicKey(private_key)
+    return private_key, public_key
+
+def sm2_sign(private_key, message):
+    curve = private_key.curve
+    z = int(sha256(message).hexdigest(), 16)
+    
+    while True:
+        k = RFC6979(private_key.secret, z)  # RFC6979算法生成确定性随机数k
+        R = k * curve.generator
+        r = R.x % curve.order
+        if r == 0:
+            continue
+        e = int(sha256(message + hex(R.x)[2:] + hex(R.y)[2:]).hexdigest(), 16)
+        s = (k + e * private_key.secret) % curve.order
+        if s != 0:
+            break
+
+    return r, s,k
+
+def sm2_verify(public_key, message, r, s):
+    curve = public_key.curve
+    z = int(sha256(message).hexdigest(), 16)
+    e = int(sha256(message + hex(r)[2:] + hex(s)[2:]).hexdigest(), 16)
+
+    t = (r + s) % curve.order
+    if t == 0:
+        return False
+
+    P = s * curve.generator + t * public_key.point
+    if P.is_infinity():
+        return False
+
+    R = P.x % curve.order
+    return R == r
+if __name__ == "__main__":
+    # 选择椭圆曲线参数，这里选用SM2推荐的曲线参数
+    p = 0xFFFFFFFEFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF00000000FFFFFFFFFFFFFFFF
+    a = 0xFFFFFFFEFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF00000000FFFFFFFFFFFFFFFC
+    b = 0x28E9FA9E9D9F5E344D5A9E4BCF6509A7F39789F515AB8F92DDBCBD414D940E93
+    Gx = 0x32C4AE2C1F1981195F9904466A39C9948FE30BBFF2660BE171F6241638F7BD6
+    Gy = 0xBC3736A2F4F6779C59BDCEE36B692153D0A9877CC62A474002DF32E52139F0A0
+    n = 0xFFFFFFFEFFFFFFFFFFFFFFFFFFFFFFFF7203DF6B21C6052B53BBF40939D54123
+
+ #   curve = Curve('sm2p256v1')
+    #curve.initialize(p, a, b, Gx, Gy, n)
+  #  curve = Curve.get_curve('sm2p256v1')
+    #curve = Curve('sm2')  
+    #curve = Curve('sm2', p, a, b, Gx, Gy, n)
+    #curve = Curve('sm2', p, a, b, Gx, Gy, n)
+    # 生成私钥和公钥对
+    curve = Curve.get_curve('sm2p256v1')  # 获取SM2推荐的曲线
+    private_key, public_key = generate_key_pair(curve)
+
+    # 待签名的消息
+    message = "Hello, SM2!"
+
+    # 签名
+    r, s ,k= sm2_sign(private_key, message)
+
+    # 验证签名
+    is_valid = sm2_verify(public_key, message, r, s)
+
+    print("私钥:", hex(private_key.secret))
+    print("生成的k:", hex(k))
+    print("原始消息:", message)
+    print("签名值r:", hex(r))
+    print("签名值s:", hex(s))
+    print("验证结果:", is_valid)

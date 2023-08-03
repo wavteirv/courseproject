@@ -1,0 +1,77 @@
+# A 的发送方脚本
+
+import socket
+from sm2_sign import sm2_sign
+
+def main():
+    try:
+        # 要发送的消息
+        message = "Hello, this is A sending a message to B!"
+        
+        # 使用 A 的私钥对消息进行签名
+        signature = sm2_sign(private_key_A, message)
+
+        # 创建套接字并连接到 B
+        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        sock.connect(('127.0.0.1', 8888))
+
+        # 发送消息和签名数据
+        data_to_send = message.encode() + b'\n' + signature
+        sock.sendall(data_to_send)
+
+        # 关闭套接字
+        sock.close()
+        print("消息发送成功！")
+
+    except Exception as e:
+        print("发送消息出现错误：", e)
+
+if __name__ == "__main__":
+    main()
+
+
+
+
+# B 的接收方脚本
+
+import socket
+from sm2_verify import sm2_verify
+
+def main():
+    try:
+        # 创建套接字并绑定地址
+        server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        server_socket.bind(('127.0.0.1', 8888))
+        server_socket.listen(1)
+
+        print("等待连接...")
+        conn, addr = server_socket.accept()
+        print("连接成功：", addr)
+
+        # 接收数据
+        data = conn.recv(1024)
+
+        # 解析数据为消息和签名
+        data = data.split(b'\n')
+        message = data[0].decode()
+        signature = data[1]
+
+        # 使用 A 的公钥对签名进行验证
+        is_valid = sm2_verify(public_key_A, message, signature)
+
+        # 打印验证结果
+        if is_valid:
+            print("消息验证通过，签名有效！")
+            print("接收到的消息：", message)
+        else:
+            print("消息验证失败，签名无效！")
+
+        # 关闭连接和套接字
+        conn.close()
+        server_socket.close()
+
+    except Exception as e:
+        print("接收消息出现错误：", e)
+
+if __name__ == "__main__":
+    main()
