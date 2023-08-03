@@ -1,0 +1,43 @@
+from cryptography.hazmat.primitives.asymmetric import ec
+from cryptography.hazmat.primitives import serialization
+from cryptography.hazmat.backends import default_backend
+from cryptography.hazmat.primitives import hashes
+from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
+from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
+from cryptography.hazmat.primitives import padding
+from cryptography.hazmat.primitives import serialization
+from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
+import os
+import socket
+
+# 生成SM2密钥对
+def generate_sm2_key_pair():
+    private_key = ec.generate_private_key(ec.SECP256R1(), default_backend())
+    public_key = private_key.public_key()
+    return private_key, public_key
+
+# 使用SM2公钥加密数据
+def encrypt_with_sm2(public_key, plaintext):
+    ciphertext = public_key.encrypt(plaintext, ec.ECIES(hashes.SHA256()))
+    return ciphertext
+
+if __name__ == "__main__":
+    # 生成SM2密钥对
+    private_key, public_key = generate_sm2_key_pair()
+
+    # 建立网络通信
+    client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    client_socket.connect(('127.0.0.1', 12345))
+    print('连接已建立')
+
+    # 待加密的数据
+    message = b"succseeful decrypted!"
+
+    # 加密数据
+    ciphertext = encrypt_with_sm2(public_key, message)
+
+    # 发送加密后的数据给服务器
+    client_socket.sendall(ciphertext)
+
+    # 关闭连接
+    client_socket.close()
