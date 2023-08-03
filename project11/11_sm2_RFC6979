@@ -97,7 +97,7 @@ if __name__ == "__main__":
     private_key, public_key = generate_key_pair(curve)
 
     # 待签名的消息
-    message = "Hello, SM2!"
+    message = "SM2RFC6979"
 
     # 签名
     r, s ,k= sm2_sign(private_key, message)
