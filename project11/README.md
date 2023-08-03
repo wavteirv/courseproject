@@ -13,6 +13,8 @@ SM2数字签名算法基于椭圆曲线密码体制，涉及椭圆曲线的点�
 
 （6）签名验证：利用公钥、消息摘要和签名，进行SM2签名验证。
 
+代码中需要提前下载ecpy库
+
 运行结果：
 
 <img width="468" alt="1" src="https://github.com/wavteirv/sdu-project-group78/assets/102475494/f5829acd-04cc-4d56-9afb-64d53ed2f550">
