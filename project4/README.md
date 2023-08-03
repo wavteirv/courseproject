@@ -7,8 +7,10 @@
 这些优化措施主要是为了提高代码的效率和可读性，让代码更加简洁和易于理解。
 
 原代码：
+
 <img width="518" alt="y" src="https://github.com/wavteirv/sdu-project-group78/assets/102475494/0ec7cbcc-e1a3-4b7d-b77e-fcc5df4bb260">
 
 优化后：
+
 <img width="517" alt="1" src="https://github.com/wavteirv/sdu-project-group78/assets/102475494/f00f471e-b945-4983-8688-cf867a3d6c80">
 
