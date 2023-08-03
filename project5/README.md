@@ -25,6 +25,9 @@ Merkle Tree 在验证数据完整性方面具有以下优势：
 由于运行结果过长，截屏截不全，所以以文字形式展示：
 
 已连接到 Python 3.7.4
+
 Merkle 根节点: b7d3319e67bfc42bc2013a6ca62152fcf5f43a6696adfb70e8bed24ed91e6af6
+
 第 3 个叶节点的证明: ['6b23c0d5f35d1b11f9b683f0b0a617355deb11277d91ae091d399c655b87940d', '63956f0ce48edc48a0d528cb0b5d58e4d625afb14d63ca1bb9950eb657d61f40', 'c505d0d37dece5239cb2459129f3f36438c8f769483d2723b565f1177d743ac4']
+
 证明是否有效? True
