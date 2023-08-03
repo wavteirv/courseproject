@@ -1,0 +1,31 @@
+import socket
+
+# 生成客户端的SM2密钥对
+client_private_key = ec.generate_private_key(ec.SECP256R1())
+client_public_key = client_private_key.public_key()
+
+# 创建TCP/IP socket
+client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+server_address = ('localhost', 8888)
+
+try:
+    client_socket.connect(server_address)
+
+    # 待签名的消息
+    message = "Hello, SM2!"
+
+    # 发送消息给服务器
+    client_socket.sendall(message.encode())
+
+    # 接收服务器返回的签名
+    data = client_socket.recv(1024)
+    signature = data
+
+    print("接收到服务器签名：", signature.hex())
+
+    # 验证签名的有效性
+    is_valid = verify_signature(client_public_key, message, signature)
+    print("签名验证结果：", is_valid)
+
+finally:
+    client_socket.close()
