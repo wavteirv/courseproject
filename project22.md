@@ -22,7 +22,9 @@ MPT中的路径压缩是指在插入、删除和查找操作时对树进行优�
 
 
 ## 3. 结构
+
 <img width="455" alt="屏幕截图 2023-08-04 183357" src="https://github.com/wavteirv/courseproject/assets/102475494/e9d0e0fd-f88f-41d5-98e3-b9fddd4a59a8">
+
 ### 3.1 节点类型
 
 MPT中的节点有三种类型：
