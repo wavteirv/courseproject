@@ -18,8 +18,11 @@ MPT中的每个节点都有一个唯一的哈希值，该哈希值由节点的�
 
 MPT中的路径压缩是指在插入、删除和查找操作时对树进行优化，减少树的高度和节点数量，从而提高操作的效率。路径压缩是通过合并具有相同前缀的节点来实现的，从而减少不必要的节点。
 
-## 3. 结构
+<img width="652" alt="屏幕截图 2023-08-04 183417" src="https://github.com/wavteirv/courseproject/assets/102475494/93b02338-ca11-4d1b-9db5-acdd1ed304e2">
 
+
+## 3. 结构
+<img width="455" alt="屏幕截图 2023-08-04 183357" src="https://github.com/wavteirv/courseproject/assets/102475494/e9d0e0fd-f88f-41d5-98e3-b9fddd4a59a8">
 ### 3.1 节点类型
 
 MPT中的节点有三种类型：
