@@ -3,9 +3,11 @@
 
 78小组成员：吴笑寒
 
+共完成project01.02.04.05.09.10.11.13.14.15.16.19.21.22(15项)
+
 操作系统：Windows 10
 
-编程语言：Python 3.8.5
+编程语言：Python 3.8.5||VS2022
 
 相关库：ecpy/cryptography/socket/gmssl
 
