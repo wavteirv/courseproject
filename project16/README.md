@@ -1,3 +1,5 @@
+# Project16: implement sm2 2P decrypt with real network communication
+实验过程：
 1. 导入所需的库，包括 hashlib 用于哈希函数、random 用于生成随机数、socket 用于网络通信等。
 
 2. 定义了椭圆曲线的参数和曲线对象 E，以及生成元 G。
@@ -45,3 +47,4 @@
   （7）计算原始消息 M = C_2 异或 t，并删除填充的零字节。
 
 10. 输出解密后的原始消息 M。
+
