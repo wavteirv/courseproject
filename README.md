@@ -11,4 +11,5 @@
 
 该仓库的每个子文件夹为一个完整项目。因此只需要下载该仓库的内容即可获取所有项目文件。
 
-# (https://github.com/wavteirv/courseproject/tree/main/project1)
+## project1：
+https://github.com/wavteirv/courseproject/blob/main/project1/.md
