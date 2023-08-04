@@ -13,3 +13,5 @@
 
 ## project1：
 https://github.com/wavteirv/courseproject/blob/main/project1/.md
+## project2:
+https://github.com/wavteirv/courseproject/blob/main/project2/README.md
